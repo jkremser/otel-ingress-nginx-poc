@@ -1,7 +1,14 @@
 #!/bin/bash
 
+k apply -f https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
+helm upgrade -i msol-app-bff-main \
+   --namespace other-app \
+   --create-namespace \
+   oci://ghcr.io/apollographql/helm-charts/router \
+   -f apollo-values.yaml
+
 helm upgrade -i ingress-nginx ingress-nginx --reuse-values \
-   --repo https://kubernetes.github.io/ingress-nginx \
+   https://kubernetes.github.io/ingress-nginx \
    --namespace ingress-nginx \
    --set controller.metrics.enabled=true
 
@@ -14,7 +21,7 @@ helm upgrade -i ingress-nginx ingress-nginx --reuse-values \
 # curl --resolve msol-app-fe-main.local:8080:127.0.0.1 http://msol-app-fe-main.local:8080
 
 helm upgrade -i keda-otel-scaler -nkeda \
- --repo oci://ghcr.io/kedify/charts/otel-add-on \
+ oci://ghcr.io/kedify/charts/otel-add-on \
  --version=v0.1.3 \
  -f ./otel-scaler-values.yaml
 
